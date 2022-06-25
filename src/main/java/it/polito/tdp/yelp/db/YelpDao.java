@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import it.polito.tdp.yelp.model.Business;
 import it.polito.tdp.yelp.model.Review;
@@ -99,6 +101,100 @@ public class YelpDao {
 						res.getInt("review_count"));
 				
 				result.add(user);
+			}
+			res.close();
+			st.close();
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<String> getAllCities() {
+		String sql = "SELECT DISTINCT(city)\n"
+				+ "FROM business";
+		List<String> result = new ArrayList<String>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				result.add(res.getString("city"));
+			}
+			res.close();
+			st.close();
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<Business> getBusinessPerCity(String city) {
+		String sql = "SELECT * FROM Business WHERE city = ?";
+		List<Business> result = new ArrayList<Business>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, city);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				Business business = new Business(res.getString("business_id"), 
+						res.getString("full_address"),
+						res.getString("active"),
+						res.getString("categories"),
+						res.getString("city"),
+						res.getInt("review_count"),
+						res.getString("business_name"),
+						res.getString("neighborhoods"),
+						res.getDouble("latitude"),
+						res.getDouble("longitude"),
+						res.getString("state"),
+						res.getDouble("stars"));
+				result.add(business);
+			}
+			res.close();
+			st.close();
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public Collection<Review> getReviewsByBusiness(Business locale) {
+		String sql = "SELECT * FROM Reviews WHERE business_id = ? ORDER BY review_date";
+		List<Review> result = new ArrayList<Review>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, locale.getBusinessId());
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				Review review = new Review(res.getString("review_id"), 
+						res.getString("business_id"),
+						res.getString("user_id"),
+						res.getDouble("stars"),
+						res.getDate("review_date").toLocalDate(),
+						res.getInt("votes_funny"),
+						res.getInt("votes_useful"),
+						res.getInt("votes_cool"),
+						res.getString("review_text"));
+				result.add(review);
 			}
 			res.close();
 			st.close();
