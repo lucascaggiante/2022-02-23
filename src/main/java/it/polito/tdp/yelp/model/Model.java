@@ -41,15 +41,14 @@ public class Model {
 				LocalDate data1 = recensioniCrescenti.get(j).getDate();
 				int peso = (int) ChronoUnit.DAYS.between(data1, data2);
 				Graphs.addEdge(this.grafo, recensioniCrescenti.get(j), recensioniCrescenti.get(i), peso);
-				Adiacenze prova = new Adiacenze (recensioniCrescenti.get(j), recensioniCrescenti.get(i), peso);
 				
 				
 			}
 			
 		}
 		
-		System.out.println("# vertici : "+this.grafo.vertexSet().size());
-		System.out.println("# archi : "+this.grafo.edgeSet().size());
+		//System.out.println("# vertici : "+this.grafo.vertexSet().size());
+		//System.out.println("# archi : "+this.grafo.edgeSet().size());
 		
 	}
 	
@@ -67,7 +66,7 @@ public class Model {
 				result.remove(recensione);
 			}
 		}
-		System.out.println(result+"		#ARCHI: "+piuArchi);
+		
 		return result+"		#ARCHI: "+piuArchi;
 		
 	}
@@ -92,28 +91,29 @@ public class Model {
 
 	public String getArchi() {
 		// TODO Auto-generated method stub
-		return ""+this.grafo.vertexSet().size();
+		return ""+this.grafo.edgeSet().size();
 	}
 	
 	public List<Review> trovaPercorso() {
 		
 		this.percorsoMigliore = new ArrayList<>();
 		List<Review> parziale = new ArrayList<>();
-		int menoStars = 5;
+		Double menoStars = 5.0;
 		Review recensioneMinima = null;
 		for (Review recensione : recensioniCrescenti) {
 			if (menoStars>recensione.getStars()) {
 				recensioneMinima = recensione;
+				menoStars = recensione.getStars();
 			}
 		}
-		System.out.println(recensioneMinima);
-		parziale.add(recensioneMinima);
 		
+		parziale.add(recensioneMinima);
+		System.out.println(parziale);
 		cerca(parziale);
 		
 		
 		
-		
+		System.out.println(recensioniCrescenti);
 		return this.percorsoMigliore;
 	}
 	
@@ -126,19 +126,25 @@ public class Model {
 		}
 		for (Review vicino : Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
 			//Se hanno le stesse stelle
-			if (//!parziale.contains(vicino) &&
-				vicino.getStars()==parziale.get(parziale.size()-1).getStars()) {
-				parziale.add(vicino);				
-				cerca(parziale);		
-				parziale.remove(parziale.size()-1);
+			if (!parziale.contains(vicino)) {
+				
+				if(vicino.getStars()==parziale.get(parziale.size()-1).getStars()) {
+					parziale.add(vicino);				
+					cerca(parziale); 
+					parziale.remove(parziale.size()-1);
+					}
+				if(vicino.getStars()>parziale.get(parziale.size()-1).getStars()) {
+					parziale.add(vicino);
+					cerca(parziale);
+					parziale.remove(parziale.size()-1);
+					}
+				
+				
+				}
 			}
-			//Se ha almeno una stella in piu
-			if (!parziale.contains(vicino) &&
-					vicino.getStars()>parziale.get(parziale.size()-1).getStars()) {
-				parziale.add(vicino);				
-				cerca(parziale);		
-				parziale.remove(parziale.size()-1);
 		}
-	}
+			
+
+		
 }
-}
+

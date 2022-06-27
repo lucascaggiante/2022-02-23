@@ -59,7 +59,7 @@ public class FXMLController {
     	this.model.creaGrafo(cmbLocale.getValue());
     	txtResult.appendText("Grafo creato: ");
     	txtResult.appendText(" #VERTICI: "+this.model.getVertici());
-    	txtResult.appendText(" #ARCHI :"+this.model.getArchi());
+    	txtResult.appendText(" #ARCHI :"+this.model.getArchi()+"\n");
     	txtResult.appendText("\n"+this.model.getRecensionePesante());
     }
 

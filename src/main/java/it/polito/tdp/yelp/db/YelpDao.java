@@ -138,7 +138,7 @@ public class YelpDao {
 	}
 
 	public List<Business> getBusinessPerCity(String city) {
-		String sql = "SELECT * FROM Business WHERE city = ?";
+		String sql = "SELECT * FROM Business WHERE city = ? ORDER BY business_name";
 		List<Business> result = new ArrayList<Business>();
 		Connection conn = DBConnect.getConnection();
 
